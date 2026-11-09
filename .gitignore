@@ -1,0 +1,31 @@
+# Local reverse-engineering toolchain & downloaded binaries
+tools/
+ref_apks/
+refs/
+apktool_out/
+
+# Decompiled JADX reference outputs & intermediate build caches
+jadx_user/
+jadx_mod2/
+jadx_out/
+jadx_verify/
+output/
+smb2_build/
+apktool_out/build/
+apktool_out_standalone/
+
+# Private signing keystores & signature metadata (NEVER commit private keys)
+*.jks
+*.keystore
+*.idsig
+
+# Original / temporary unsigned or aligned APKs
+图库.apk
+图库_修复版v2.apk
+*_unsigned.apk
+*_aligned.apk
+build_*.apk
+
+# Python cache
+__pycache__/
+*.pyc
