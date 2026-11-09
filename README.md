@@ -151,3 +151,11 @@ tools/bin/uber-apk-signer.bat -a build_aligned.apk --ks release.jks --ksAlias re
 - **[hstonc/QP-Gallery-Releases-Mod](https://github.com/hstonc/QP-Gallery-Releases-Mod)**：高帧率与社区改进参考
 - **[jason840709/QuickPic-Gallery-Mod-2](https://github.com/jason840709/QuickPic-Gallery-Mod-2)**：纯 Java 64 位 `JniUtils` 引擎与动图解码实现
 - **[AgNO3/jcifs-ng](https://github.com/AgNO3/jcifs-ng)** & **[BouncyCastle](https://www.bouncycastle.org/)**：SMBv2/SMBv3 协议栈与加密支持
+
+---
+
+## 开源许可与合规声明 (License)
+
+- 本仓库新增的自动化修补/构建脚本、桥接源码与文档采用 **[MIT License](LICENSE)** 开源。
+- 第三方开源组件（`jcifs-ng` LGPL-2.1、`BouncyCastle` MIT、`QuickPic-Gallery-Mod-2` MIT）的合规声明与历史底包著作权说明详见 **[LICENSING.md](LICENSING.md)**。
+
