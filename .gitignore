@@ -19,14 +19,8 @@ apktool_out_standalone/
 *.keystore
 *.idsig
 
-# Original / temporary unsigned or aligned APKs (Release APKs are uploaded to GitHub Releases)
-图库.apk
-图库_修复版.apk
-图库_修复版_独立包名.apk
-图库_修复版v2.apk
-*_unsigned.apk
-*_aligned.apk
-build_*.apk
+# Original / temporary / release APKs (Release APKs are uploaded to GitHub Releases)
+*.apk
 
 # Python cache
 __pycache__/

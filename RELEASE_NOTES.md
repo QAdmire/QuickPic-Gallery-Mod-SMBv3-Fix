@@ -50,8 +50,8 @@
 
 | 安装包 | 包名 | 说明 | SHA-256 |
 | :--- | :--- | :--- | :--- |
-| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 原包名覆盖/替换版（`2.47 MB`） | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
-| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐**：独立包名共存版，彻底规避手机管家对原包名的云端黑名单（`2.47 MB`） | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
+| **`QuickPic-SMBv3-Fix.apk`** | `com.alensw.PicFolder` | 原包名覆盖/替换版（`2.47 MB`） | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
+| **`QuickPic-SMBv3-Fix-Standalone.apk`** | `io.github.quickpic.gallery` | **推荐**：独立包名共存版，彻底规避手机管家对原包名的云端黑名单（`2.47 MB`） | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
 
 ---
 

@@ -43,8 +43,8 @@
 
 | 文件名 | 包名 (`applicationId`) | 适用场景 | SHA-256 校验值 |
 | :--- | :--- | :--- | :--- |
-| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 兼容原版快图包名，适合无系统包名黑名单拦截的设备 | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
-| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐使用**：可与原版共存，且彻底避开部分手机管家对 `com.alensw.PicFolder` 包名的云端静态黑名单 | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
+| **`QuickPic-SMBv3-Fix.apk`** | `com.alensw.PicFolder` | 兼容原版快图包名，适合无系统包名黑名单拦截的设备 | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
+| **`QuickPic-SMBv3-Fix-Standalone.apk`** | `io.github.quickpic.gallery` | **推荐使用**：可与原版共存，且彻底避开部分手机管家对 `com.alensw.PicFolder` 包名的云端静态黑名单 | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
 
 ---
 
