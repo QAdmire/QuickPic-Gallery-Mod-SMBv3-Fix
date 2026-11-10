@@ -563,15 +563,23 @@ public class bu extends bv {
         CIFSContext ctx = null;
         try {
             URL url = new URL((URL) null, str2, j.a);
-            String host = url.getHost();
+            String origHost = url.getHost();
+            String host = origHost;
             int port = url.getPort();
             String urlPath = url.getPath();
             if (urlPath != null && urlPath.length() > 0) {
                 path = urlPath;
             }
-            int atIdx = aVar.b.lastIndexOf("@" + host);
+            int atIdx = aVar.b.lastIndexOf("@" + origHost);
             String rawUser = atIdx >= 0 ? aVar.b.substring(0, atIdx) : aVar.b;
             String domain = null;
+            if (host != null) {
+                int hostSemi = host.indexOf(59);
+                if (hostSemi > 0) {
+                    domain = host.substring(0, hostSemi);
+                    host = host.substring(hostSemi + 1);
+                }
+            }
             String userInfo = url.getUserInfo();
             if (userInfo != null && userInfo.length() > 0) {
                 int semi = userInfo.indexOf(59);
@@ -730,10 +738,12 @@ public class bu extends bv {
         try {
             target = a(strA);
             if (target.exists() && target.length() > 0) {
-                SmbFile alt = a(a(str, b(str2)));
-                if (alt.exists() && target.length() > 0) {
+                String altPath = a(str, b(str2));
+                SmbFile alt = a(altPath);
+                if (alt.exists() && alt.length() > 0) {
                     throw new RuntimeException("file already exists");
                 }
+                strA = altPath;
                 target = alt;
             }
             out = new SmbFileOutputStream(target);

@@ -38,12 +38,20 @@
    - 移除 298 个友盟统计 SDK（`b.a.*`、`com.c.a.*`）与内建自更新器（`com.alensw.updater.*`）类，剔除安装未知应用、读取系统账户等敏感权限。
    - 使用全新生成的 3072-bit RSA 私钥进行 v2/v3 签名，并提供独立包名共存版。
 
+6. **全量修复 `targetSdkVersion 34` 兼容性与深层功能 Bug**
+   - **修复设置「更新」闪退**：从 `res/xml*/main_pref.xml` 中彻底移除指向已删除 `UpdateView` 的残留菜单项。
+   - **修复分享 / 编辑 / 设为壁纸 / 外部视频播放器无应用列表或闪退**：在 `AndroidManifest.xml` 声明 `QUERY_ALL_PACKAGES`（适配 Android 11+ 包可见性），并在 `com.alensw.ui.activity.a`、`setResult` 及 `QuickApp` 全局注入 `CompatIntents` (`FileProvider` URI 转换) 与 `StrictMode` 保护。
+   - **修复 Android 10~15「隐藏文件夹」失败**：修复 `ba.c()` / `ba.d()` 因 `MediaStore.getMediaScannerUri()` 与 `media_type=0` 在高版本系统报错而中断 `.nomedia` 创建的问题。
+   - **修复搜索结果 / 本地目录删除失败与相册整目录删除**：为 `an.smali`（多选删除）与 `as.smali`（大图单张删除）补齐直接文件删除回退逻辑，并集成 `FolderDelete` 整目录删除与 `ScanPriority` 扫描队列优化。
+   - **修复 SMB / 云端视频流播放与快进拖动**：修复 `TransferService` (`n.smali`) 视频文件名未 URL 编码导致含空格/`#`/`?` 视频无法播放的问题，并修正内置 HTTP 流媒体服务 (`j.smali`) `206 Partial Content` 的 `Content-Length` 计算错误。
+   - **清理已停服云盘与完善权限引导**：在「添加云端」界面隐藏 13 个早已停服的 2015 年网盘入口，仅保留实际可用的 **Samba (局域网共享)** 与 **OwnCloud / WebDAV**；首次授予存储权限返回应用时自动刷新相册列表，并为 Android TV 补齐权限跳转降级保护。
+
 #### 下载说明与校验值
 
 | 安装包 | 包名 | 说明 | SHA-256 |
 | :--- | :--- | :--- | :--- |
-| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 原包名覆盖/替换版（`2.41 MB`） | `a2e1eab7deb586b0c02c6059a276cbfa0a2159cc0022ad3a0c32044f434fda2e` |
-| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐**：独立包名共存版，彻底规避手机管家对原包名的云端黑名单（`2.41 MB`） | `31a9d5178a2bdabd5ddcc6cec7c7f429a0e24ebe0cd99111cbcbcb6c791a0cc0` |
+| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 原包名覆盖/替换版（`2.47 MB`） | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
+| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐**：独立包名共存版，彻底规避手机管家对原包名的云端黑名单（`2.47 MB`） | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
 
 ---
 

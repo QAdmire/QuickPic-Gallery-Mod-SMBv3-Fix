@@ -32,18 +32,19 @@
 | **后台状态保持** | 浏览 SMB 文件夹时切换应用或返回桌面，再切回快图会**重置回本地相册主页**（大目录下甚至直接崩溃重启） | 修复 `DocumentFolder`/`LocalFolder`/`MediaStoreFolder` 序列化全量文件列表触发的 **Android 7.0+ Binder 512 KB 限制 (`TransactionTooLargeException`)**，并修复 `z`/`as` 页面恢复优先级 |
 | **本地与时刻搜索** | 点击顶栏搜索图标输入关键词后报错：`create failed: java.lang.SecurityException: Failed to find provider...` | 修复 `targetSdkVersion >= 26` 下 `CommonFolder` 对 `file:///search` 注册 `ContentObserver` 引发的系统权限拦截，并为特殊字符搜索增加 `Pattern.quote()` 兜底 |
 | **64 位兼容与动图** | 部分社区版通过二进制硬改 `.so` 实现 64 位兼容，存在解码崩溃、扫描死循环、GIF/WebP 动图失效及 DEX 重复类冲突 | 移植 `QuickPic-Gallery-Mod-2` 的 **纯 Java `JniUtils` 64 位引擎**，支持全架构（ARM64/x86_64），恢复原版扫描器并清理 186 个重复云端类 |
+| **`targetSdk 34` 全面适配** | 分享/编辑/外部播放器列表为空、点击设置「更新」闪退、Android 10+ 隐藏文件夹失败、搜索结果/本地目录无法删除、SMB 含空格/特殊字符视频无法播放、通知栏崩溃 | 补齐 `QUERY_ALL_PACKAGES` 与 `CompatIntents` (`FileProvider`) 钩子、移除失效「更新」菜单与 13 个已停服网盘、修复 `.nomedia` 隐藏文件夹、修复多选/单张/整目录删除、修复 SMB 视频流 URL 编码与 HTTP `206 Range` 响应头 |
 | **隐私与报毒治理** | 安装时被国产 ROM 管家拦截报毒 `a.gray.devicemaster.a` / `a.gray.devucenaster.a`（猎豹时期遗留统计与内建更新器特征） | 彻底剥离 **298 个友盟统计 (`b.a.*`/`com.c.a.*`) 与自更新 (`com.alensw.updater.*`) 类**，移除安装未知应用与读取系统账号等高危权限，使用全新 RSA-3072 私钥签名，并提供独立包名版 |
 
 ---
 
 ## 安装包版本对比与下载
 
-发布包提供两个功能完全一致的签名版本（均已 4 字节 `zipalign` 对齐并通过 v2/v3 签名校验，体积仅 **2.41 MB**）：
+发布包提供两个功能完全一致的签名版本（均已 4 字节 `zipalign` 对齐并通过 v2/v3 签名校验，体积仅 **2.47 MB**）：
 
 | 文件名 | 包名 (`applicationId`) | 适用场景 | SHA-256 校验值 |
 | :--- | :--- | :--- | :--- |
-| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 兼容原版快图包名，适合无系统包名黑名单拦截的设备 | `a2e1eab7deb586b0c02c6059a276cbfa0a2159cc0022ad3a0c32044f434fda2e` |
-| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐使用**：可与原版共存，且彻底避开部分手机管家对 `com.alensw.PicFolder` 包名的云端静态黑名单 | `31a9d5178a2bdabd5ddcc6cec7c7f429a0e24ebe0cd99111cbcbcb6C791a0cc0` |
+| **`图库_修复版.apk`** | `com.alensw.PicFolder` | 兼容原版快图包名，适合无系统包名黑名单拦截的设备 | `89a9ab8a34668f1f541c65ded0d321a694911857ce6b7815935da41464ed5132` |
+| **`图库_修复版_独立包名.apk`** | `io.github.quickpic.gallery` | **推荐使用**：可与原版共存，且彻底避开部分手机管家对 `com.alensw.PicFolder` 包名的云端静态黑名单 | `1d4c17b78a4acd0974a210a6bb4d857a1f020673a8ae7486ac09c548e9b4c5ab` |
 
 ---
 
@@ -133,7 +134,10 @@ python build_smb2_upgrade.py
 # 3. 应用 Android 8.0+ 搜索崩溃 (SecurityException) 与正则容错补丁
 python fix_search_bug.py
 
-# 4. 生成独立包名版 (io.github.quickpic.gallery) 工程树
+# 4. 一键应用全量 targetSdk 34 深度兼容修复（分享/外部播放器、隐藏相册、删除回退、SMB 视频流、移除死链网盘等）
+python fix_all_remaining_bugs.py
+
+# 5. 生成独立包名版 (io.github.quickpic.gallery) 工程树
 python build_standalone_pkg.py
 
 # 5. 使用 apktool 打包、zipalign 对齐并签名
