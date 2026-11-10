@@ -18,6 +18,7 @@
   - [3. 修复搜索功能崩溃 (`SecurityException: Failed to find provider`)](#3-修复搜索功能崩溃-securityexception-failed-to-find-provider)
   - [4. 纯 Java 64 位图像引擎与 GIF/WebP 动图支持](#4-纯-java-64-位图像引擎与-gifwebp-动图支持)
   - [5. 隐私净化与消除安全软件误报 (`a.gray.devicemaster.a`)](#5-隐私净化与消除安全软件误报-agraydevicemastera)
+  - [6. `targetSdkVersion 34` 深度适配与 10 大项全量功能修复](#6-targetsdkversion-34-深度适配与-10-大项全量功能修复)
 - [SMB 局域网共享连接指南](#smb-局域网共享连接指南)
 - [从源码/脚本复现构建](#从源码脚本复现构建)
 - [致谢与上游项目](#致谢与上游项目)
@@ -95,6 +96,31 @@
   - 将 `com.alensw.b.f.a` 统计埋点桥接类替换为空实现（No-op）。
 - **精简敏感权限**：从 `AndroidManifest.xml` 中移除 `REQUEST_INSTALL_PACKAGES`、`GET_ACCOUNTS`、`MANAGE_ACCOUNTS`、`USE_CREDENTIALS`、`AUTHENTICATE_ACCOUNTS`、`READ_SYNC_SETTINGS`。
 - **全新私有签名与独立包名**：弃用全网泛滥的 AOSP `testkey` 公开测试证书，使用全新生成的 3072-bit RSA 证书进行 v2/v3 签名，并提供 `io.github.quickpic.gallery` 独立包名版。
+
+### 6. `targetSdkVersion 34` 深度适配与 10 大项全量功能修复
+
+通过对全量 2,668 个 `.smali` 类与资源文件的静态审计，本版本一次性修复了快图在现代 Android（Android 8.0 ~ 15，`targetSdkVersion 34`）下的全部深层兼容性隐患（详见 [`fix_all_remaining_bugs.py`](fix_all_remaining_bugs.py)）：
+
+1. **修复点击「设置 → 更新」闪退 (`ActivityNotFoundException`)**
+   - 从 `res/xml/main_pref.xml`、`res/xml-v28/main_pref.xml`、`res/xml-v33/main_pref.xml` 中彻底移除指向已剔除自更新器 `com.alensw.updater.UpdateView` 的残留菜单项，并清理 `MainPreference.a__$appendPatch2` 中的冗余钩子。
+2. **修复 Android 11+ 分享 / 编辑 / 设为壁纸 / 外部播放器列表为空**
+   - 在 `AndroidManifest.xml` 中补充声明 `<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>`，解决 `targetSdkVersion >= 30` 下系统包可见性隔离导致 `PackageManager.queryIntentActivities()` 返回空列表的问题。
+3. **修复外部视频播放器调用、裁剪页分享与 `FileUriExposedException` 崩溃**
+   - 在 `com.alensw.ui.activity.a` 的 `queryIntentActivities`、`startActivity`、`startActivityForResult` 入口以及全局 `setResult` 调用点接入 `CompatIntents`（自动将 `file://` 转换为 `FileProvider` `content://` URI 并授予临时读写权限），并在 `QuickApp.onCreate()` 注入进程级 `StrictMode.VmPolicy` 保护。
+4. **修复 Android 10~15「隐藏文件夹」(`.nomedia`) 永远提示失败**
+   - 修复 `com.alensw.a.ba.c()` 在 `MediaStore.getMediaScannerUri()` 抛出 `UnsupportedOperationException` 时误判为「扫描器正忙」的逻辑反转，以及 `ba.d(String)` 因 Android 10+ 拒绝 `media_type=0` 更新返回 `-1` 而提前中断的问题，确保 `com.alensw.ui.c.j` 稳定创建 `.nomedia` 文件。
+5. **修复 Android 12+ `PendingIntent` 崩溃与 Android 8+ 通知栏不显示**
+   - 为 `UrlTaskService` 与 `com.alensw.PicFolder.c` 的 `PendingIntent` 补齐 `FLAG_IMMUTABLE` (`0xc000000`) 标志，并在 `com.alensw.b.l.a` 中自动创建 `NotificationChannel` (`quickpic_channel`)。
+6. **修复 SMB / 云端视频流播放失败与快进拖动异常**
+   - 在 `TransferService` (`com.alensw.transfer.n`) 中对本地 HTTP 代理 URL 的视频文件名执行 `Uri.encode()`，解决含空格、`#`、`?`、`+` 的远程视频无法播放的问题；修正内置 HTTP Server (`com.alensw.b.e.j`) 在 `206 Partial Content` 下的 `Content-Length` 计算公式（`end - start + 1`）。
+7. **修复搜索结果 / 本地目录删除失败、相册整目录删除与幻灯片「无动画」失效**
+   - 为 `an.smali`（多选删除）与 `as.smali`（大图单张删除）增加物理文件删除回退（当 URI 为 `file://` 或 `ContentResolver.delete` 返回 `0` 时直接删除物理文件并同步 MediaStore）；集成 `FolderDelete` 整文件夹删除工作线程（`cf.smali`）、`ScanPriority` 扫描队列与隐藏目录缓存去重（`v.smali`），并修复幻灯片切换动画设为「无」时的空指针崩溃。
+8. **修复 Wi-Fi 快传接收完成后点击「查看」列表为空**
+   - 在 `LocalFolder.writeToParcel` 中设置 `<= 200` 项阈值：文件数不超过 200（如 Wi-Fi 快传会话列表）时正常序列化传递，超过 200 时写 `0` 以兼顾防 `TransactionTooLargeException` 与快传预览。
+9. **修复首次授权存储权限返回不刷新 & Android TV 权限页崩溃**
+   - 在 `GalleryActivity` 中为 `MANAGE_APP_ALL_FILES_ACCESS_PERMISSION` 增加 `try-catch` 与通用设置页降级跳转，并在 `onStart()` 中检测到权限授予后自动触发 `bz.w()` 刷新相册列表。
+10. **清理 13 个已停服云盘、移除 500px 死链并完善 SMB 细节**
+    - 在 `com.alensw.cloud.e` 中将「云端空间 → 添加」列表精简为实际可用的 **Samba (局域网共享)** 与 **OwnCloud / WebDAV**（隐藏快盘、百度云旧接口、Picasa 等 13 个 2015 年失效入口）；在 `bc.smali` 禁用侧边栏自动添加 `500px`；在 `bu.java` 支持 `DOMAIN;server/share` 写法与同名文件上传重命名回退。
 
 ---
 
